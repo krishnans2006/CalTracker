@@ -1,0 +1,899 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TRANSITiQ - Public Transit Data API",
+    "description": "Information about Houston METRO's bus and rail network. This is an OData Service API that exposes routes, stops, schedules, etc. This service can also calculate trips from point A to point B using near real-time information.",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://hacktj2020api.eastbanctech.com/transitiq"
+    }
+  ],
+  "paths": {
+    "/Routes": {
+      "get": {
+        "summary": "Routes",
+        "description": "Returns a list of routes.\nQuery examples:\n1. Get all routes: /Routes?subscription-key=YOUR_KEY\n2. Get all routes that contains '2' in their name: /Routes?$filter=substringof('2', RouteName) &subscription-key=YOUR_KEY\n",
+        "operationId": "53f1db25ee3f34058c6da3b8",
+        "parameters": [
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "Example: $filter=substringof('2', RouteName)",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "enum": [
+                "json"
+              ],
+              "type": "String",
+              "default": "json"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Routes('{id}')": {
+      "get": {
+        "summary": "Routes('{id}')",
+        "description": "Returns route info by ID.\nQuery examples:\n1. Get route: /Routes('MeTrAuOfHaCo_20971')?subscription-key=YOUR_KEY\n2. Get route with all stops: /Routes('MeTrAuOfHaCo_20971')?subscription-key=YOUR_KEY&$expand=Stops",
+        "operationId": "53f1db25ee3f34058c6da3b9",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "enum": [
+                "xml"
+              ],
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Routes('{id}')/Stops": {
+      "get": {
+        "summary": "Routes('{id}')/Stops",
+        "description": "Returns ordered stops for the route.\nRoutes have variations, so stops for one variation will be returned. To get stops used in all variations, use \"NonOrderedStops\" method.\nQuery examples:\n1. Get stops for the route: /Routes('MeTrAuOfHaCo_20971')/Stops?subscription-key=YOUR_KEY\n2. Get stops for direction: /Routes('MeTrAuOfHaCo_20971')/Stops?subscription-key=YOUR_KEY&$filter=DirectionId eq 'MeTrAuOfHaCo_20971_0'",
+        "operationId": "53f1db25ee3f34058c6da3ba",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "OData filter expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$select",
+            "in": "query",
+            "description": "OData select expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Routes('{id}')/Arrivals": {
+      "get": {
+        "summary": "Routes('{id}')/Arrivals",
+        "description": "Returns today arrivals for the route.\nQuery examples:\n1. Get all arrivals for the route: /Routes('MeTrAuOfHaCo_20971')/Arrivals?subscription-key=YOUR_KEY\n2. Get routes arrivals after 3:00PM for September, 12: /Routes('MeTrAuOfHaCo_20971')/Arrivals?subscription-key=YOUR_KEY&$filter=LocalArrivalTime gt datetime'2012-09-12T15:00:00'",
+        "operationId": "53f1db25ee3f34058c6da3bb",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Routes('{id}')/Directions": {
+      "get": {
+        "summary": "Routes('{id}')/Directions",
+        "description": "Returns directions for the route.\nUsually route has 2 direction, \"0\" and \"1\".\nQuery examples:\n1. Get directions for the route: /Routes('MeTrAuOfHaCo_20971')/Directions?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3bc",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Routes('{id}')/NonOrderedStops": {
+      "get": {
+        "summary": "Routes('{id}')/NonOrderedStops",
+        "description": "Returns ALL stops for the route.\nStops for all route variation will be returned. Non-ordered. To get ordered stops for some variation, use \"Stops\" method.\nQuery examples:\n1. Get stops for the route: /Routes('MeTrAuOfHaCo_20971')/NonOrderedStops?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3bd",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/GeoAreas('{lat}|{lon}|{radius}')/Stops": {
+      "get": {
+        "summary": "GeoAreas('{lat}|{lon}|{radius}')/Stops",
+        "description": "Returns a list of stops by geo location.\nRadius in miles.\nQuery examples:\n1. Get stops by geo area: /GeoAreas('29.750555|-95.371048|0.5')/Stops?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3be",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/GeoAreas('{lat}|{lon}|{radius}')/Routes": {
+      "get": {
+        "summary": "GeoAreas('{lat}|{lon}|{radius}')/Routes",
+        "description": "Returns a list of routes by geo location.\nRadius in miles.\nQuery examples:\n1. Get routes by geo area: /GeoAreas('29.750555|-95.371048|0.5')/Routes?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3bf",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/GeoAreas('{lat}|{lon}|{radius}')/NextArrivals": {
+      "get": {
+        "summary": "GET GeoAreas('{lat}|{lon}|{radius}')/NextArrivals",
+        "description": "Returns a list of incoming arrivals by geo location.\nRadius in miles.\nQuery examples:\n1. Get arrivals by geo area: /GeoAreas('29.750555|-95.371048|0.5')/NextArrivals?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3c0",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Stops": {
+      "get": {
+        "summary": "Stops",
+        "description": "Returns a list of stops.\nQuery examples:\n1. Get all stops: /Stops?subscription-key=YOUR_KEY <br/>\n2. Get all stops that contains 'B' in their name: /Stops?$filter=substringof('B', Name)&subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3c1",
+        "parameters": [
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "OData filter expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Stops('{id}')": {
+      "get": {
+        "summary": "Stops('{id}')",
+        "description": "Returns stop info by ID.\nQuery examples:\n1. Get stop: /Stops('MeTrAuOfHaCo_10026')?subscription-key=YOUR_KEY\n2. Get stop with all arrivals: /Stops('MeTrAuOfHaCo_10026')?subscription-key=YOUR_KEY&$expand=Arrivals",
+        "operationId": "53f1db25ee3f34058c6da3c2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Stops('{id}')/Arrivals": {
+      "get": {
+        "summary": "Stops('{id}')/Arrivals",
+        "description": "Returns today arrivals for the stop.\nQuery examples:\n1. Get all arrivals for the stop: /Stops('MeTrAuOfHaCo_10026')/Arrivals?subscription-key=YOUR_KEY\n2. Get stop arrivals after 3:00PM for September, 12: /Stops('MeTrAuOfHaCo_10026')/Arrivals?subscription-key=YOUR_KEY&$filter=LocalArrivalTime gt datetime'2012-09-12T15:00:00'",
+        "operationId": "53f1db25ee3f34058c6da3c3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Stops('{id}')/Routes": {
+      "get": {
+        "summary": "Stops('{id}')/Routes",
+        "description": "Returns routes going trough the stop.\nQuery examples:\n1. Get routes for the stop: /Stops('MeTrAuOfHaCo_10026')/Routes?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3c4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$filter",
+            "in": "query",
+            "description": "OData filtering expression",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/CalculateItineraryByPoints": {
+      "get": {
+        "summary": "CalculateItineraryByPoints",
+        "description": "Calculate trip from point A to B.\nQuery examples:\n1. Calculate trip for current time: /CalculateItineraryByPoints?lat1=29.7520116285855&lon1=-95.3713343539019&lat2=29.7548465554328&lon2=-95.3357880398602&$orderby=EndTime&$expand=Legs&subscription-key=YOUR_KEY\n2. Calculate trip starting after 4:00PM time (20:00 UTC): /CalculateItineraryByPoints?lat1=29.7520116285855&lon1=-95.3713343539019&lat2=29.7548465554328&lon2=-95.3357880398602&startTime=datetime'2012-09-12T20:00:00Z'&$orderby=EndTime&$expand=Legs&subscription-key=YOUR_KEY\n",
+        "operationId": "53f1db25ee3f34058c6da3c5",
+        "parameters": [
+          {
+            "name": "lat1",
+            "in": "query",
+            "description": "Latitude of the departure point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lon1",
+            "in": "query",
+            "description": "Longitude of the departure point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat2",
+            "in": "query",
+            "description": "Latitude of the arrival point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lon2",
+            "in": "query",
+            "description": "Longitude of the arrival point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Start time. Must be greater then current time and less then current time + 12 hours.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/GetItineraryKml": {
+      "get": {
+        "summary": "GetItineraryKml",
+        "description": "After the itinerary is calculated, you may get KML to show this itinerary on a map.\nQuery examples:\n1. Get KML by itineraryId: /GetItineraryKml?itineraryId=guid'85b7c0c2-20ea-4a81-baa5-9bd8f14885dd'&$format=kml&subscription-key=YOUR_KEY\n",
+        "operationId": "53f1db25ee3f34058c6da3c6",
+        "parameters": [
+          {
+            "name": "itineraryId",
+            "in": "query",
+            "description": "like guid'85b7c0c2-20ea-4a81-baa5-9bd8f14885dd'",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Itineraries": {
+      "get": {
+        "summary": "GET Itineraries",
+        "description": "GET Itineraries",
+        "operationId": "53f1db25ee3f34058c6da3c7",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/Itineraries(guid'{id}')": {
+      "get": {
+        "summary": "GET Itineraries(guid'{id}')",
+        "description": "GET Itineraries(guid'{id}')",
+        "operationId": "53f1db25ee3f34058c6da3c8",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/FindStopsInArea": {
+      "get": {
+        "summary": "GET FindStopsInArea",
+        "description": "Query examples:\n(raduis in miles, not more than 50)\nFind Stop by code 9711: /FindStopsInArea?lat=29.691694&lon=-95.316917&radius=1&searchText='9711'&subscription-key=YOUR_KEY <br/>\n",
+        "operationId": "53f1db25ee3f34058c6da3ca",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/FindRoutesInArea": {
+      "get": {
+        "summary": "GET FindRoutesInArea",
+        "description": "Query examples:\n(raduis in miles, not more than 50)\nFind Route 700: /FindRoutesInArea?lat=29.7520116285855&lon=-95.3713343539019&radius=1&searchText='700'&subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3cb",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          }
+        }
+      }
+    },
+    "/CalculateItineraryArrivingAt": {
+      "get": {
+        "summary": "CalculateItineraryArrivingAt",
+        "description": "Calculate trip from point A to B.\nTrips will be built to arrive by EndTime\nQuery examples:\nCalculate trip ending before after 4:00PM time (20:00 UTC): /CalculateItineraryArrivingAt?lat1=29.7520116285855&lon1=-95.3713343539019&lat2=29.7548465554328&lon2=-95.3357880398602&endTime=datetime'2012-09-12T20:00:00Z'&$orderby=EndTime&$expand=Legs&subscription-key=YOUR_KEY\n",
+        "operationId": "53f1db25ee3f34058c6da3cc",
+        "parameters": [
+          {
+            "name": "lat1",
+            "in": "query",
+            "description": "Latitude of the departure point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lon1",
+            "in": "query",
+            "description": "Longitude of the departure point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat2",
+            "in": "query",
+            "description": "Latitude of the arrival point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lon2",
+            "in": "query",
+            "description": "Longitude of the arrival point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "$format",
+            "in": "query",
+            "description": "json",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "$orderby",
+            "in": "query",
+            "description": "OData sorting expression",
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "Desired Arrival time. Must be greater then current time and less then current time + 12 hours.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/xml": { }
+            }
+          },
+          "404": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/Vehicles": {
+      "get": {
+        "summary": "Vehicles",
+        "description": "Returns a list of current buses.\nEach bus may be monitored (real time info is provided) or scheduled (only scheduled info is accessible)\nQuery examples:\nGet all buses: /Vehicles?subscription-key=YOUR_KEY",
+        "operationId": "53f1db25ee3f34058c6da3ce",
+        "responses": {
+          "200": {
+            "description": "null"
+          }
+        }
+      }
+    },
+    "/Incidents": {
+      "get": {
+        "summary": "Incidents",
+        "description": "Returns list of active alerts and detours\nQuery examples:\nGet all incidents: /Incidents?subscription-key=YOUR_KEY\n",
+        "operationId": "53f1db25ee3f34058c6da3cf",
+        "responses": {
+          "200": {
+            "description": "null"
+          }
+        }
+      }
+    },
+    "/FullRouteInfo": {
+      "get": {
+        "summary": "FullRouteInfo",
+        "description": "Information about Route (Shape, Stops and other metadata)",
+        "operationId": "fullrouteinfo",
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "query",
+            "description": "ID of the Route",
+            "schema": {
+              "type": "String"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "null"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "name": "Ocp-Apim-Subscription-Key",
+        "in": "header"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "name": "subscription-key",
+        "in": "query"
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyHeader": [ ]
+    },
+    {
+      "apiKeyQuery": [ ]
+    }
+  ]
+}
