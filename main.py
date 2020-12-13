@@ -3,11 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 from threading import Thread
 from time import sleep
-from datetime import datetime, time
+import datetime
 
+import math
 import csv
 import requests
 import json
+from random import random
+import numpy as np
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "pLoKmIjNuHbYgVtFcRdXeSzWaQ"
@@ -36,28 +39,45 @@ class User(db.Model):
     year_calories_eaten = db.Column(db.Integer, default=0)
     year_calories_burned = db.Column(db.Integer, default=0)
     
-    a = db.Column(db.Integer, default=0) #RMR
-    b = db.Column(db.Integer, default=0)
-    c = db.Column(db.Integer, default=0)
-    d = db.Column(db.Integer, default=0)
-    e = db.Column(db.Integer, default=0)
-    f = db.Column(db.Integer, default=0)
-    g = db.Column(db.Integer, default=0)
-    h = db.Column(db.Integer, default=0)
-    i = db.Column(db.Integer, default=0)
+    a = db.Column(db.Integer, default=0) # RMR
+    b = db.Column(db.Integer, default=0) # Used to adjust calorie calcoulations
+    c = db.Column(db.Integer, default=0) # Used to adjust calorie calcoulations
+    d = db.Column(db.Integer, default=0) # Used to adjust calorie calcoulations
+    e = db.Column(db.Integer, default=0) #Used for machine learning
+    f = db.Column(db.Integer, default=0) #Also used for weight history
+    g = db.Column(db.Integer, default=0) #used for activity history
+    h = db.Column(db.Integer, default=0) #met average neumerator
+    i = db.Column(db.Integer, default=0) #met average denominator
     
-    j = db.Column(db.Text, default="") #Excercise history
-    k = db.Column(db.Text, default="")
-    l = db.Column(db.Text, default="")
-    m = db.Column(db.Text, default="")
-    n = db.Column(db.Text, default="")
-    o = db.Column(db.Text, default="")
-    p = db.Column(db.Text, default="")
-    q = db.Column(db.Text, default="")
-    r = db.Column(db.Text, default="")
+    j = db.Column(db.Text, default="") # Excercise history
+    k = db.Column(db.Text, default="") # Day Reset
+    l = db.Column(db.Text, default="") # Week Reset
+    m = db.Column(db.Text, default="") # Month Reset
+    n = db.Column(db.Text, default="") # Weight history
+    o = db.Column(db.Text, default="") # Cal history
+    p = db.Column(db.Text, default="") #Used for weight history
+    q = db.Column(db.Text, default="") #Activity history
+    r = db.Column(db.Text, default="") #Used for activity history
 
     def __repr__(self):
         return "{0}: {1} at {2}".format(self.id_, self.uname, self.email)
+
+def estimate_coef(x, y): #retrieved from https://www.geeksforgeeks.org/linear-regression-python-implementation/
+    # number of observations/points 
+    n = np.size(x) 
+  
+    # mean of x and y vector 
+    m_x, m_y = np.mean(x), np.mean(y) 
+  
+    # calculating cross-deviation and deviation about x 
+    SS_xy = np.sum(y*x) - n*m_y*m_x 
+    SS_xx = np.sum(x*x) - n*m_x*m_x 
+  
+    # calculating regression coefficients 
+    b_1 = SS_xy / SS_xx 
+    b_0 = m_y - b_1*m_x 
+  
+    return(b_0, b_1) 
 
 @app.before_first_request
 def init_db():
@@ -68,7 +88,101 @@ def update_activity_mets():
   global activity_mets
   activity_mets = get_activity_mets()
 
+@app.before_request
+def day_reset():
+  if session.get("uname"):
+    match = User.query.filter_by(uname=session["uname"]).first()
+    now = datetime.datetime.now()
+    reset = False
+    if not match.k:
+      match.k = now.strftime("%m/%d/%Y %H:%M:%S")
+    else:
+      reset_dt = datetime.datetime.strptime(match.k, "%m/%d/%Y %H:%M:%S")
+      while now > reset_dt:
+        reset_dt += datetime.timedelta(days=1)
+        if not reset:
+          match.day_calories_eaten = 0
+          match.day_calories_burned = 0
+          reset = True
+      match.k = reset_dt.strftime("%m/%d/%Y %H:%M:%S")
+  db.session.commit()
+
+def learn(user):
+  x = user.o.split("|")
+  temp = user.n.split("\n")
+  temp2 = 0.0
+  for i in temp:
+    i = i.split("|")
+    temp2 = max(i[1], float(temp2))
+  y = []
+  temp3 = int(temp2)
+  k = 0
+  for i in range(temp3):
+    j = 0
+    ct = 0
+    total = 0
+    while(j < i + 1 and k < temp.length):
+      total += float(temp[k][0])
+      j = float(temp[k][1])
+      ct += 1
+      k += 1
+    y[i] = total / ct
+  newVals = estimate_coef(np.array(x), np.array(y))
+  return([newVals, x, y])
+
+
+@app.before_request
+def week_reset():
+  if session.get("uname"):
+    match = User.query.filter_by(uname=session["uname"]).first()
+    now = datetime.datetime.now()
+    reset = False
+    if not match.l:
+      match.l = now.strftime("%m/%d/%Y %H:%M:%S")
+    else:
+      reset_dt = datetime.datetime.strptime(match.l, "%m/%d/%Y %H:%M:%S")
+      while now > reset_dt:
+        reset_dt += datetime.timedelta(days=7)
+        match.o += str(match.week_calories_eaten - match.week_calories_burned) + "|"
+        match.e += 1
+        if match.e > 4:
+          nv = learn(match)
+          match.o = ''
+          match.n = ''
+          for i in range(math.floor(match.e ** 0.5), nv[1].length):
+            match.o += str(nv[1])
+            match.n += str(nv[2]) + "|" + str(i - math.floor(match.e ** 0.5)) + "\n"
+          match.c -= nv[0][0]
+          match.b -= math.e**(1.0 / nv[0][1]) - math.e
+        if not reset:
+          match.week_calories_eaten = 0
+          match.week_calories_burned = 0
+          reset = True
+          flash("DPlease update your weight now! It has been a week since you last updated your weight.")
+      match.l = reset_dt.strftime("%m/%d/%Y %H:%M:%S")
+  db.session.commit()
+
+@app.before_request
+def month_reset():
+  if session.get("uname"):
+    match = User.query.filter_by(uname=session["uname"]).first()
+    now = datetime.datetime.now()
+    reset = False
+    if not match.m:
+      match.m = now.strftime("%m/%d/%Y %H:%M:%S")
+    else:
+      reset_dt = datetime.datetime.strptime(match.m, "%m/%d/%Y %H:%M:%S")
+      while now > reset_dt:
+        reset_dt += datetime.timedelta(days=30)
+        if not reset:
+          match.month_calories_eaten = 0
+          match.month_calories_burned = 0
+          reset = True
+      match.m = reset_dt.strftime("%m/%d/%Y %H:%M:%S")
+  db.session.commit()
+
 GETPOST = ["GET", "POST"]
+MS_PER_DAY = 86400000.0
 activity_mets = []
 
 def get_activity_mets():
@@ -81,25 +195,35 @@ def get_activity_mets():
     return activity_mets
 
 def get_mets(activity):
-  print(f"Getting mets for {activity}")
   for activity_details in activity_mets:
     if activity_details[1] == activity:
-      print(f"Mets for {activity} is {activity_details[2]}")
       return activity_details[2]
-  print("Mets not found :(")
   return -1.0
 
-def get_calories(activity, weight, minutes):
-  print(f"Getting calories for {activity} for {minutes} with person weighing {weight}")
-  return (get_mets(activity) * 3.5 * weight * minutes) / 200
+def get_calories(activity, rmr, d=0):
+  #print(f"Getting calories for {activity} for {minutes} with person weighing {weight}")
+  return (get_mets(activity) ** (1 / (d+1)) * float(rmr))
 
-def calcRMR(gender, weight, height, age):
+def calcRMR(gender, weight, height, age, b=0, c=0):
   if gender == "male":
-    return 10 * weight + 6.25 * height - 5 * age + 5
+    return (66.47 + 13.75 * weight + 5.003 * height - 6.755 * age) * math.log(b + math.e) + c
   elif gender == "female":
-    return 10 * weight + 6.25 * height - 5 * age - 161
-  elif gender == "other":
-    return 10 * weight + 6.25 * height - 5 * age - 78
+    return (655.1 + 9.563 * weight + 1.85 * height - 4.676 * age) * math.log(b + math.e) + c
+  else:
+    return (10.0 * weight + 6.25 * height - 5.0 * age - 78.0) * math.log(b + math.e) + float(c)
+
+@app.route("/updateRMR")
+def updateRMR(t):
+  uname = session.get("uname")
+  if not uname:
+    return redirect(url_for("index"))
+  match = User.query.filter_by(uname=uname).first()
+  cals_burned = float(t) * match.a / MS_PER_DAY
+  match.day_calories_burned += cals_burned
+  match.week_calories_burned += cals_burned
+  match.month_calories_burned += cals_burned
+  match.year_calories_burned += cals_burned
+  db.session.commit()
 
 def login_db(uname, psw):
   match = User.query.filter_by(uname=uname).first()
@@ -118,47 +242,34 @@ def register_db(uname, email, psw):
   db.session.commit()
   flash(f"SSuccessfully Registered as {new_user.uname}!")
 
-def day_reset():
-  while True:
-    now = datetime.now().time()
-    oneoclock = time(hour=1, minute=0, second=0)
-    oneoclockplusone = time(hour=1, minute=1, second=0)
-    if oneoclock < now < oneoclockplusone:
-      for user in User.query.all():
-        user.day_calories_eaten = 0
-        user.day_calories_burned = 0
-    sleep(20000)
-    
-
-def week_reset():
-  while True:
-    now = datetime.now().time()
-    oneoclock = time(hour=1, minute=0, second=0)
-    oneoclockplusone = time(hour=1, minute=1, second=0)
-    if oneoclock < now < oneoclockplusone and datetime.now().weekday() == 6:
-      for user in User.query.all():
-        user.day_calories_eaten = 0
-        user.day_calories_burned = 0
-    sleep(20000)
-
-def month_reset():
-  while True:
-    now = datetime.now().time()
-    oneoclock = time(hour=1, minute=0, second=0)
-    oneoclockplusone = time(hour=1, minute=1, second=0)
-    if oneoclock < now < oneoclockplusone and datetime.now().weekday() == 6:
-      for user in User.query.all():
-        user.day_calories_eaten = 0
-        user.day_calories_burned = 0
-    sleep(20000)
-
 @app.route("/")
 def index():
   if session.get("logged_in"):
     match = User.query.filter_by(uname=session.get("uname")).first()
-    return render_template("index.html", uname=session.get("uname"), activity_mets=activity_mets, history=match.j)
+    mets = ""
+    for i in activity_mets:
+      mets += "\n"
+      for j in i:
+        mets += str(j) + "|"
+    return render_template("index.html", 
+                         uname=session.get("uname"), 
+                         email=match.email, 
+                         gender=match.gender, 
+                         height=match.height, 
+                         weight=match.weight, 
+                         age=match.age,
+                         history=match.j,
+                         activity_mets=mets,
+                         day_calories_eaten=match.day_calories_eaten, 
+                         week_calories_eaten=match.week_calories_eaten, 
+                         month_calories_eaten=match.month_calories_eaten, 
+                         life_calories_eaten=match.year_calories_eaten,
+                         day_calories_burned=match.day_calories_burned,
+                         week_calories_burned=match.week_calories_burned,
+                         month_calories_burned=match.month_calories_burned,
+                         life_calories_burned=match.year_calories_burned)
   else:
-    return render_template("index.html", uname=session.get("uname"), activity_mets=activity_mets, history=None)
+    return render_template("index.html")
 
 @app.route("/login", methods=GETPOST)
 def login():
@@ -182,6 +293,9 @@ def register():
     uname = request.form.get("uname")
     email = request.form.get("email")
     psw = request.form.get("psw")
+    if User.query.filter_by(uname=uname).first():
+      flash("DUsername is taken!")
+      return redirect(url_for("register"))
     register_db(uname, email, psw)
     return redirect(url_for("login"))
   return render_template("register.html", uname=session.get("uname"))
@@ -201,9 +315,9 @@ def my_account():
   match = User.query.filter_by(uname=session.get("uname")).first()
   if request.method == "POST":
     gender = request.form.get("gender")
-    height = int(request.form.get("height"))
-    weight = int(request.form.get("weight"))
-    age = int(request.form.get("age"))
+    height = request.form.get("height")
+    weight = request.form.get("weight")
+    age = request.form.get("age")
     npsw = request.form.get("npsw")
     opsw = request.form.get("opsw")
     if npsw and opsw:
@@ -217,23 +331,30 @@ def my_account():
       if gender:
         match.gender = gender
       if height:
+        height = int(height)
         if request.form.get("units") == "on":
           height *= 2.54
         match.height = int(height)
       if weight:
+        weight = int(weight)
         if request.form.get("units") == "on":
           weight /= 2.20462262
-        match.weight = int(weight) 
+          if match.f != 0:
+            match.n += str(weight) + "|" + match.p + "\n"
+            match.p = str((float(datetime.datetime.now().toordinal()) - float(match.f)) / (MS_PER_DAY * 7.0 / 1000.0) + float(match.p))
+          else:
+            match.p = "0.0"
+          match.f = datetime.datetime.now().toordinal()
       if age:
         match.age = int(age)
-      match.a = calcRMR(gender, weight, height, age)
+      #match.a = calcRMR(match.gender, match.weight, match.height, match.age, match.b, match.c)
+      match.a = 100
       db.session.commit()
       flash("SSuccessfully Updated Biometric Data!")
       return redirect(url_for("my_account"))
   return render_template("myaccount.html", 
                          uname=session.get("uname"), 
                          email=match.email, 
-                         psw=match.psw, 
                          gender=match.gender, 
                          height=match.height, 
                          weight=match.weight, 
@@ -286,9 +407,9 @@ def add_nutrition():
     return redirect(url_for("login"))
   if session.get("food_cals"):
     match = User.query.filter_by(uname=session.get("uname")).first()
-    if not match.gender or not match.weight or not match.height or not match.age:
-      flash("DPlease set your gender, weight, height, and age first!")
-      return redirect(url_for("my_account"))
+    # if not match.gender or not match.weight or not match.height or not match.age:
+    #   flash("DPlease set your gender, weight, height, and age first!")
+    #   return redirect(url_for("my_account"))
     flash(f"SSuccessfully added {session.get('food_cals')} calories from {session.get('label')}!")
     match.day_calories_eaten += session["food_cals"]
     match.week_calories_eaten += session["food_cals"]
@@ -324,26 +445,28 @@ def do_activity(id, mins):
     flash("DYou muct log in first to access this page!")
     return redirect(url_for("login"))
   match = User.query.filter_by(uname=session.get("uname")).first()
-  if not match.gender or not match.weight or not match.height or not match.age:
-      flash("DPlease set your gender, weight, height, and age first!")
-      return redirect(url_for("my_account"))
+  # if not match.gender or not match.weight or not match.height or not match.age:
+  #     flash("DPlease set your gender, weight, height, and age first!")
+  #     return redirect(url_for("my_account"))
   activity = activity_mets[id]
-  cals = get_calories(activity[1], match.weight, mins)
+  # match.a = calcRMR(match.gender, match.weight, match.height, match.age, match.b, match.c)
+  cals = get_calories(activity[1], match.a , match.d)
   match.day_calories_burned += cals
   match.week_calories_burned += cals
   match.month_calories_burned += cals
   match.year_calories_burned += cals
   match.j += str(activity[3]) + "|" + str(mins) + "\n"
+  if(match.r):
+    match.h += int(float(activity[2]))
+    match.i += 1
+    match.r = str((float(datetime.datetime.now().toordinal()) - float(match.g)) / (MS_PER_DAY * 7.0 / 1000.0) + float(match.r))
+  else:
+    match.r = "0.0"
+  match.g = datetime.datetime.now().toordinal()
   db.session.commit()
-  flash(f"SSuccessfully completed {activity}!")
+  flash(f"SSuccessfully completed {activity[1]} for {mins} minutes!")
   return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
-  day_reset_thread = Thread(target=day_reset)
-  week_reset_thread = Thread(target=week_reset)
-  month_reset_thread = Thread(target=month_reset)
-  day_reset_thread.start()
-  week_reset_thread.start()
-  month_reset_thread.start()
   app.run(debug=True)

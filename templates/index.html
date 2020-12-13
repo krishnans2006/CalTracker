@@ -4,17 +4,42 @@
 {% block content %}
 {%if uname%}
 <br/>
-<center><h1>Recommended Activities</h1></center>
+<center><h2>Stats</h2></center>
+<table class="table table-bordered">
+    <tr>
+        <th></th>
+        <th>Today</th>
+        <th>This Week</th>
+        <th>This Month</th>
+        <th>Lifetime</th>
+    </tr>
+    <tr>
+        <th>Calories Consumed</th>
+        <td>{{day_calories_eaten}}</td>
+        <td>{{week_calories_eaten}}</td>
+        <td>{{month_calories_eaten}}</td>
+        <td>{{life_calories_eaten}}</td>
+    </tr>
+    <tr>
+        <th>Calories Burned</th>
+        <td>{{day_calories_burned}}</td>
+        <td>{{week_calories_burned}}</td>
+        <td>{{month_calories_burned}}</td>
+        <td>{{life_calories_burned}}</td>
+    </tr>
+</table>
 <br/>
-<button id="0" type="button" class="btn, btn-block"></button>
+<center><h2>Recommended Activities</h2></center>
 <br/>
-<button id="1" type="button" class="btn, btn-block"></button>
+<a id="0" type="button" class="btn, btn-block"></a>
 <br/>
-<button id="2" type="button" class="btn, btn-block"></button>
+<a id="1" type="button" class="btn, btn-block"></a>
 <br/>
-<button id="3" type="button" class="btn, btn-block"></button>
+<a id="2" type="button" class="btn, btn-block"></a>
 <br/>
-<button id="4" type="button" class="btn, btn-block"></button>
+<a id="3" type="button" class="btn, btn-block"></a>
+<br/>
+<a id="4" type="button" class="btn, btn-block"></a>
 {% endif %}
 {% endblock content %}
 {% block script %}
@@ -27,7 +52,8 @@
         var temp = document.getElementById("mets").innerHTML.split("\n");
         for (let i = 0; i < temp.length; i++) {
             mets[i] = temp[i].split("|");
-            delete mets[i][3];
+            delete mets[i][4];
+            
         }
         mets.shift();
         temp = document.getElementById("hist").innerHTML.split("\n");
@@ -35,10 +61,12 @@
         for (let i = 0; i < temp.length; i++) {
             hist[i] = temp[i].split("|");
         }
+        delete hist[hist.length-1];
         var pool = [];
-        for (let r = Math.floor(Math.random() * hist.length), i = r; i != r - 1 && pool.length < 8; i++) {
+        console.log(hist);
+        for (let r = Math.floor(Math.random() * (hist.length - 1)), i = r; i != r - 1 && pool.length < 8; i++) {
             if(temp == "") break;
-            if(i == hist.length) i = 0;
+            if(i == hist.length-1) i = 0;
             c = false;
             for (let j = 0; j < pool.length; j++) {
                 if(hist[i][0] == pool[j] || Math.random() + pool.length + 1 - pool.length / 2 < 0.5**(hist[i][1] / 60)){
@@ -46,37 +74,40 @@
                 }
             }
             if(c) continue;
-            pool.push(hist[i]);
+            console.log(hist[i][0], i);
+            pool.push(hist[i][0]);
         }
         var shortMets = []
         var c = 0;
-        while(shortMets.length < 5 && c < 50){
+        while(shortMets.length < 10 && c < 50){
             c++;
-            for(var i = 0; i < mets.length; i += 100 * Math.random()){
+            for(var i = 0; i < mets.length; i += Math.floor(100 * Math.random())){
                 if(mets[i][2] ** 1.5 * weight ** 0.5 * age ** 0.3 < 1000 * Math.random() && function(){
                     for(var j = 0; j < shortMets.length; j++){
-                        if(mets[shortMets[j][0]][1] == mets[i][1] && Math.random() > 0.2) return false;
-                        return true;
+                        if(shortMets[j] == i) return false;
                     }
+                    return true;
                 }()){
-                    shortMets.push(mets[i]);
+                    shortMets.push(i);
                 }
             }
         }
         {
-            let i = Math.random() * (shortMets.length - 1);
+            let i = Math.floor(Math.random() * (shortMets.length - 1));
             pool.push(shortMets[i]);
             pool.unshift(shortMets[i + 1]);
         }
         if(pool.length < 10) pool = shortMets;
+        console.log(pool);
         var recs = []
         var s = 0
         if(Math.random() < 0.5) {
             s = 5
         }
         for(var i = 0, m = 0; i < 5; i++){
-            n = pool[i];
-            var m = 7 - Math.floor(mets[pool[i]][2] * age ** 0.3 * weight ** 0.5 / 200);
+            var n = pool[i];
+            console.log(n);
+            var m = 7 - Math.floor(mets[n][2] * age ** 0.3 * weight ** 0.5 / 200);
             if(m < 0) m = 0;
             var t = times[Math.floor(Math.random() * m)];
             var count = 0;
@@ -91,13 +122,13 @@
                 t = times[Math.floor(Math.random() * m)];
             }
             if(count == 100) t = times[m+1];
-            recs.push(n, t);
+            recs.push([n, t]);
         }
         for (let i = 0; i < recs.length; i++) {
-            document.getElementById(i).innerHTML = mets[recs[i][0]][1] + "for" + recs[i][1] + "minutes."; 
-            console.log(mets[recs[i][0]][1]);
+            document.getElementById(i).innerHTML = mets[recs[i][0]][1] + " for " + recs[i][1] + " minutes."; 
+            document.getElementById(i).setAttribute("href", "/do_activity/" + recs[i][0] + "/" + recs[i][1]);
         }
     }
-    
+    function setTheme(theme) {}
 </script>
 {% endblock script %}
