@@ -1,5 +1,50 @@
-{% extends "base.html" %} {% block title %}{% endblock title %} {% block css
-%}{% endblock css %} {% block content %} {% if life_calories_eaten %}
+{% extends "base.html" %} {% block title %}{% endblock title %} {% block css %}
+<!-- <style>
+  .slidecontainer {
+    width: 100%; /* Width of the outside container */
+  }
+
+  /* The slider itself */
+  .slider {
+    -webkit-appearance: none; /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: 0.2s; /* 0.2 seconds transition on hover */
+    transition: opacity 0.2s;
+  }
+
+  /* Mouse-over effects */
+  .slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+  }
+
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+</style> -->
+<style>
+  #activities {
+    background-color: white;
+  }
+</style>
+{% endblock css %} {% block content %} {% if life_calories_eaten %}
 <br />
 <center>
   <p>{{life_calories_burned}}/{{life_calories_eaten}} calories burned.</p>
@@ -24,605 +69,778 @@
     style="width:0%"
   ></div>
 </div>
+<br/>
+<center><h1>Choose Activity</h1></center>
 {% endif %}
-<div class="accordion" id="activities">
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingOne">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseOne"
-        aria-expanded="false"
-        aria-controls="collapseOne"
+<div class="slidecontainer">
+  <input
+    type="range"
+    min="1"
+    max="120"
+    value="30"
+    class="slider form-range"
+    id="myRange"
+  />
+</div>
+<center><div id="slid" class="well">30 minutes</div></center>
+<div class="container bg-light" id="accordion">
+  <div class="accordion" id="activities">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseOne"
+          aria-expanded="false"
+          aria-controls="collapseOne"
+        >
+          Bicycling
+        </button>
+      </h2>
+      <div
+        id="collapseOne"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingOne"
+        data-bs-parent="#accordionExample"
       >
-        Bicycling
-      </button>
-    </h2>
-    <div
-      id="collapseOne"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingOne"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "bicycling" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "bicycling" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwo">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseTwo"
-        aria-expanded="false"
-        aria-controls="collapseTwo"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwo">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTwo"
+          aria-expanded="false"
+          aria-controls="collapseTwo"
+        >
+          Conditioning Exercise
+        </button>
+      </h2>
+      <div
+        id="collapseTwo"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingTwo"
+        data-bs-parent="#accordionExample"
       >
-        Conditioning Exercise
-      </button>
-    </h2>
-    <div
-      id="collapseTwo"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingTwo"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "conditioning exercise" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "conditioning exercise" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingThree">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseThree"
-        aria-expanded="false"
-        aria-controls="collapseThree"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingThree">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseThree"
+          aria-expanded="false"
+          aria-controls="collapseThree"
+        >
+          Dancing
+        </button>
+      </h2>
+      <div
+        id="collapseThree"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingThree"
+        data-bs-parent="#accordionExample"
       >
-        Dancing
-      </button>
-    </h2>
-    <div
-      id="collapseThree"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingThree"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "dancing" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "dancing" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingFour">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseFour"
-        aria-expanded="false"
-        aria-controls="collapseFour"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFour">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFour"
+          aria-expanded="false"
+          aria-controls="collapseFour"
+        >
+          Fishing and Hunting
+        </button>
+      </h2>
+      <div
+        id="collapseFour"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingFour"
+        data-bs-parent="#accordionExample"
       >
-        Fishing and Hunting
-      </button>
-    </h2>
-    <div
-      id="collapseFour"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingFour"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "fishing and hunting" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "fishing and hunting" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingFive">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseFive"
-        aria-expanded="false"
-        aria-controls="collapseFive"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFive">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFive"
+          aria-expanded="false"
+          aria-controls="collapseFive"
+        >
+          Home Activities
+        </button>
+      </h2>
+      <div
+        id="collapseFive"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingFive"
+        data-bs-parent="#accordionExample"
       >
-        Home Activities
-      </button>
-    </h2>
-    <div
-      id="collapseFive"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingFive"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "home activities" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "home activities" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingSix">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseSix"
-        aria-expanded="false"
-        aria-controls="collapseSix"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSix">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseSix"
+          aria-expanded="false"
+          aria-controls="collapseSix"
+        >
+          Home Repair
+        </button>
+      </h2>
+      <div
+        id="collapseSix"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingSix"
+        data-bs-parent="#accordionExample"
       >
-        Home Repair
-      </button>
-    </h2>
-    <div
-      id="collapseSix"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingSix"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "home repair" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "home repair" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingSeven">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseSeven"
-        aria-expanded="false"
-        aria-controls="collapseSeven"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSeven">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseSeven"
+          aria-expanded="false"
+          aria-controls="collapseSeven"
+        >
+          Inactivity Quiet/Light
+        </button>
+      </h2>
+      <div
+        id="collapseSeven"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingSeven"
+        data-bs-parent="#accordionExample"
       >
-        Inactivity Quiet/Light
-      </button>
-    </h2>
-    <div
-      id="collapseSeven"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingSeven"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "inactivity quiet/light" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "inactivity quiet/light" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingEight">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseEight"
-        aria-expanded="false"
-        aria-controls="collapseEight"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingEight">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseEight"
+          aria-expanded="false"
+          aria-controls="collapseEight"
+        >
+          Lawn and Garden
+        </button>
+      </h2>
+      <div
+        id="collapseEight"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingEight"
+        data-bs-parent="#accordionExample"
       >
-        Lawn and Garden
-      </button>
-    </h2>
-    <div
-      id="collapseEight"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingEight"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "lawn and garden" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "lawn and garden" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingNine">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseNine"
-        aria-expanded="false"
-        aria-controls="collapseNine"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingNine">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseNine"
+          aria-expanded="false"
+          aria-controls="collapseNine"
+        >
+          Miscellaneous
+        </button>
+      </h2>
+      <div
+        id="collapseNine"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingNine"
+        data-bs-parent="#accordionExample"
       >
-        Miscellaneous
-      </button>
-    </h2>
-    <div
-      id="collapseNine"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingNine"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "miscellaneous" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "miscellaneous" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseTen"
-        aria-expanded="false"
-        aria-controls="collapseTen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTen"
+          aria-expanded="false"
+          aria-controls="collapseTen"
+        >
+          Music Playing
+        </button>
+      </h2>
+      <div
+        id="collapseTen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingTen"
+        data-bs-parent="#accordionExample"
       >
-        Music Playing
-      </button>
-    </h2>
-    <div
-      id="collapseTen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingTen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "music playing" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "music playing" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingEleven">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseEleven"
-        aria-expanded="false"
-        aria-controls="collapseEleven"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingEleven">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseEleven"
+          aria-expanded="false"
+          aria-controls="collapseEleven"
+        >
+          Occupation
+        </button>
+      </h2>
+      <div
+        id="collapseEleven"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingEleven"
+        data-bs-parent="#accordionExample"
       >
-        Occupation
-      </button>
-    </h2>
-    <div
-      id="collapseEleven"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingEleven"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "occupation" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "occupation" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwelve">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseTwelve"
-        aria-expanded="false"
-        aria-controls="collapseTwelve"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwelve">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTwelve"
+          aria-expanded="false"
+          aria-controls="collapseTwelve"
+        >
+          Running
+        </button>
+      </h2>
+      <div
+        id="collapseTwelve"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingTwelve"
+        data-bs-parent="#accordionExample"
       >
-        Running
-      </button>
-    </h2>
-    <div
-      id="collapseTwelve"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingTwelve"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "running" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "running" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingThirteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseThirteen"
-        aria-expanded="false"
-        aria-controls="collapseThirteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingThirteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseThirteen"
+          aria-expanded="false"
+          aria-controls="collapseThirteen"
+        >
+          Self Care
+        </button>
+      </h2>
+      <div
+        id="collapseThirteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingThirteen"
+        data-bs-parent="#accordionExample"
       >
-        Self Care
-      </button>
-    </h2>
-    <div
-      id="collapseThirteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingThirteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "self care" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "self care" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingFourteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseFourteen"
-        aria-expanded="false"
-        aria-controls="collapseFourteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFourteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFourteen"
+          aria-expanded="false"
+          aria-controls="collapseFourteen"
+        >
+          Sports
+        </button>
+      </h2>
+      <div
+        id="collapseFourteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingFourteen"
+        data-bs-parent="#accordionExample"
       >
-        Sports
-      </button>
-    </h2>
-    <div
-      id="collapseFourteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingFourteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "sports" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "sports" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingFifteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseFifteen"
-        aria-expanded="false"
-        aria-controls="collapseFifteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFifteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFifteen"
+          aria-expanded="false"
+          aria-controls="collapseFifteen"
+        >
+          Transportation
+        </button>
+      </h2>
+      <div
+        id="collapseFifteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingFifteen"
+        data-bs-parent="#accordionExample"
       >
-        Transportation
-      </button>
-    </h2>
-    <div
-      id="collapseFifteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingFifteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "transportation" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "transportation" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingSixteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseSixteen"
-        aria-expanded="false"
-        aria-controls="collapseSixteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSixteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseSixteen"
+          aria-expanded="false"
+          aria-controls="collapseSixteen"
+        >
+          Walking
+        </button>
+      </h2>
+      <div
+        id="collapseSixteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingSixteen"
+        data-bs-parent="#accordionExample"
       >
-        Walking
-      </button>
-    </h2>
-    <div
-      id="collapseSixteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingSixteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "walking" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "walking" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingSeventeen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseSeventeen"
-        aria-expanded="false"
-        aria-controls="collapseSeventeen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingSeventeen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseSeventeen"
+          aria-expanded="false"
+          aria-controls="collapseSeventeen"
+        >
+          Water Activities
+        </button>
+      </h2>
+      <div
+        id="collapseSeventeen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingSeventeen"
+        data-bs-parent="#accordionExample"
       >
-        Water Activities
-      </button>
-    </h2>
-    <div
-      id="collapseSeventeen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingSeventeen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "water activities" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "water activities" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingEighteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseEighteen"
-        aria-expanded="false"
-        aria-controls="collapseEighteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingEighteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseEighteen"
+          aria-expanded="false"
+          aria-controls="collapseEighteen"
+        >
+          Winter Activities
+        </button>
+      </h2>
+      <div
+        id="collapseEighteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingEighteen"
+        data-bs-parent="#accordionExample"
       >
-        Winter Activities
-      </button>
-    </h2>
-    <div
-      id="collapseEighteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingEighteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "winter activities" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "winter activities" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingNineteen">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseNineteen"
-        aria-expanded="false"
-        aria-controls="collapseNineteen"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingNineteen">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseNineteen"
+          aria-expanded="false"
+          aria-controls="collapseNineteen"
+        >
+          Religious Activities
+        </button>
+      </h2>
+      <div
+        id="collapseNineteen"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingNineteen"
+        data-bs-parent="#accordionExample"
       >
-        Religious Activities
-      </button>
-    </h2>
-    <div
-      id="collapseNineteen"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingNineteen"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "religious activities" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for activity in activity_mets %}
+            <!---->
+            {% if activity[0] == "religious activities" %}
+            <div class="col acc-p">
+              <a href="/do_activity/{{activity[3]}}/30">
+                <div class="card">
+                  <div class="card-body">
+                    <p>{{activity[1]}}</p>
+                  </div>
+                </div></a
+              >
+            </div>
+            {% endif %} {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwenty">
-      <button
-        class="accordion-button collapsed"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#collapseTwenty"
-        aria-expanded="false"
-        aria-controls="collapseTwenty"
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwenty">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTwenty"
+          aria-expanded="false"
+          aria-controls="collapseTwenty"
+        >
+          Volunteering Activities
+        </button>
+      </h2>
+      <div
+        id="collapseTwenty"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingTwenty"
+        data-bs-parent="#accordionExample"
       >
-        Volunteering Activities
-      </button>
-    </h2>
-    <div
-      id="collapseTwenty"
-      class="accordion-collapse collapse"
-      aria-labelledby="headingTwenty"
-      data-bs-parent="#accordionExample"
-    >
-      <div class="accordion-body">
-        {% for activity in activity_mets %}
-        <!---->
-        {% if activity[0] == "volunteer activities" %}
-        <p>
-          <a href="/do_activity/{{activity[3]}}/30">{{activity[1]}}</a>
-        </p>
-        {% endif %} {% endfor %}
+        <div class="accordion-body">
+          {% for activity in activity_mets %}
+          <!---->
+          {% if activity[0] == "volunteer activities" %}
+          <div class="col acc-p">
+            <a href="/do_activity/{{activity[3]}}/30">
+              <div class="card">
+                <div class="card-body">
+                  <p>{{activity[1]}}</p>
+                </div>
+              </div></a
+            >
+          </div>
+          {% endif %} {% endfor %}
+        </div>
       </div>
     </div>
   </div>
@@ -652,6 +870,35 @@
       "style",
       "width:" + (100 - progress) + "%; background-color: red;"
     );
+  }
+  var slider = document.getElementById("myRange");
+  var output = 0;
+  var p = document.getElementsByClassName("acc-p");
+  var a = [];
+  for (var i = 0; i < p.length; i++) {
+    a[i] = p[i].childNodes[1];
+  }
+  slider.oninput = function() {
+    output = this.value;
+    for (var i = 0; i < a.length; i++) {
+      b = a[i].getAttribute("href");
+      b = b.split("/");
+      b = "/" + b[1] + "/" + b[2] + "/" + output;
+      a[i].setAttribute("href", b);
+    }
+    document.getElementById("slid").innerHTML = output + " minutes";
+  };
+  function setTheme(theme){
+    switch(theme){
+      case "dark":
+        document.getElementById("accordion").setAttribute("class", "container bg-dark");
+        break;
+      case "light": 
+        document.getElementById("accordion").setAttribute("class", "containe bg-light");
+        break;
+      default:
+        throw new Error(theme + "theme does not exist!");
+    }
   }
 </script>
 {% endblock script %}

@@ -41,7 +41,7 @@
     required
   />
 
-  <input id="submit" class="btn btn-primary" type="submit" value="Register" disabled />
+  <input id="submit" class="btn btn-primary" type="submit" value="Register" onclick="setup()" disabled />
 </form>
 {% endblock content %} {% block script %}
 <script>
@@ -51,6 +51,10 @@
     } else {
       document.getElementById("submit").disabled = true;
     }
+  }
+  function setup() {
+    if(localStorage.getItem(document.getElementById("uname").innerHTML + "uwafiu4i9otrq8hr2qufwer2")) return;
+    localStorage.setItem(document.getElementById("uname").innerHTML + "uwafiu4i9otrq8hr2qufwer2", Date().getTime());
   }
 </script>
 {% endblock script %}
