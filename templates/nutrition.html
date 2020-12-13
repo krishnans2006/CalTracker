@@ -1,0 +1,71 @@
+{% extends "base.html" %} {% block title %}{% endblock title %} {% block css
+%}{% endblock css %} {% block content %}
+<form method="post">
+  <label for="search"><b>Search by Keywords</b></label>
+  <input
+    class="form-control"
+    type="text"
+    placeholder="Keywords"
+    id="search"
+    name="search"
+    onkeyup="check1();"
+    required
+  />
+
+  <div class="input-group">
+    <input type="number" class="form-control" name="smass" placeholder="Mass" required />
+    <div class="input-group-text">g</div>
+  </div>
+  <br />
+  <input class="btn btn-primary" id="sSub" type="submit" onclick="sr();" />
+</form>
+<br />
+<form method="post">
+  <label for="upc"><b>Enter barcode number</b></label>
+  <input
+    class="form-control"
+    type="number"
+    placeholder="Enter Barcode Number"
+    name="upc"
+    required
+  />
+
+  <div class="input-group">
+    <input type="number" class="form-control" name="umass" placeholder="Mass" required />
+    <div class="input-group-text">g</div>
+  </div>
+  <br />
+  <input class="btn btn-primary" id="upcSub" type="submit" />
+</form>
+{% if life_calories_eaten %}
+<br/>
+<table class="table table-striped table-bordered">
+    <tr>
+        <th></th>
+        <th>Today</th>
+        <th>This Week</th>
+        <th>This Month</th>
+        <th>Lifetime</th>
+    </tr>
+    <tr>
+        <th>Calories Consumed</th>
+        <td>{{day_calories_eaten}}</td>
+        <td>{{week_calories_eaten}}</td>
+        <td>{{month_calories_eaten}}</td>
+        <td>{{life_calories_eaten}}</td>
+    </tr>
+</table>
+{%endif%}
+{% endblock content %} {% block script %}
+<script>
+  function sr() {}
+  function check1() {
+    reg = /^([a-z]+\s)*[a-z]+$/i;
+    if (!reg.test(document.getElementById("search").value)) {
+      document.getElementById("sSub").disabled = true;
+    } else {
+      document.getElementById("sSub").disabled = false;
+    }
+  }
+</script>
+{% endblock script %}

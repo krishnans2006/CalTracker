@@ -1,0 +1,56 @@
+{% extends "base.html" %} {% block title %}{% endblock title %} {% block css
+%}{% endblock css %} {% block content %}
+<form method="post">
+  <label for="email"><b>Email</b></label>
+  <input
+    id="email"
+    class="form-control"
+    type="email"
+    placeholder="Enter Email"
+    name="email"
+    onkeyup="check();"
+    required
+  />
+  <label for="uname"><b>Username</b></label>
+  <input
+    class="form-control"
+    type="text"
+    placeholder="Enter Username"
+    name="uname"
+    required
+  />
+
+  <label for="psw"><b>Password</b></label>
+  <input
+    id="psw"
+    class="form-control"
+    type="password"
+    placeholder="Enter Password"
+    name="psw"
+    required
+  />
+
+  <label for="cpsw"><b>Confirm Password</b></label>
+  <input
+    id="cpsw"
+    class="form-control"
+    type="password"
+    placeholder="Confirm Password"
+    name="cpsw"
+    onkeyup="check();"
+    required
+  />
+
+  <input id="submit" class="btn btn-primary" type="submit" value="Register" disabled />
+</form>
+{% endblock content %} {% block script %}
+<script>
+  function check() {
+    if (document.getElementById("psw").value == document.getElementById("cpsw").value && document.getElementById("psw").value != "") {
+      document.getElementById("submit").disabled = false;
+    } else {
+      document.getElementById("submit").disabled = true;
+    }
+  }
+</script>
+{% endblock script %}
