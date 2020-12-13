@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block title %}{% endblock title %} {% block css
+%}{% endblock css %} {% block content %}
+<form method="post">
+  <label for="uname">Username: </label>
+  <input
+    class="form-control"
+    name="uname"
+    type="text"
+    placeholder="{{uname}}"
+    readonly
+  />
+  <label for="uname">Email: </label>
+  <input
+    class="form-control"
+    name="email"
+    type="text"
+    placeholder="{{email}}"
+    readonly
+	/>
+	<br/>
+	<label for="weight">Weight:</label>
+  <div class="input-group">
+    <input
+      type="number"
+      class="form-control"
+      name="weight"
+      placeholder="{{weight}}"
+    />
+    <div class="input-group-text" id="weight">kg</div>
+	</div>
+	<label for="height">Height:</label>
+  <div class="input-group">
+    <input
+      type="number"
+      class="form-control"
+      name="height"
+      placeholder="{{height}}"
+    />
+    <div class="input-group-text" id="height">cm</div>
+	</div>
+	<label for="age">Age:</label>
+  <div class="input-group">
+    <input type="number" class="form-control" name="age" placeholder="{{age}}" />
+  </div>
+  <label for="gender">Gender: </label>
+  <label>
+    <input type="radio" class="form-check-input" name="gender" value="Male" />
+    Male
+  </label>
+  <label>
+    <input type="radio" class="form-check-input" name="gender" value="Female" />
+    Female
+  </label>
+  <label>
+    <input type="radio" class="form-check-input" name="gender" value="Other" />
+    Other
+	</label>
+	<br/>
+	<input id="submit" class="btn btn-primary" type="submit" value="Submit" />
+  <label>
+    <input
+      class="form-check-input"
+      type="checkbox"
+      name="units"
+      id="units"
+      onclick="changeUnits();"
+    />
+    US Units
+  </label>
+</form>
+<br />
+<form method="post">
+  <label for="opsw">Old Password: </label>
+  <input class="form-control" name="opsw" type="password" />
+  <label for="npsw">New Password: </label>
+  <input class="form-control" name="npsw" type="password" onkeyup="check();"/>
+  <label for="cnpsw">Confirm New Password: </label>
+  <input class="form-control" name="cnpsw" type="password" onkeyup="check();"/>
+	<input class="btn btn-primary" type="submit" value="Update Password" />
+</form>
+{% endblock content %} {% block script %}
+<script>
+	function check() {
+    if (document.getElementById("psw").value == document.getElementById("cpsw").value && document.getElementById("psw").value != "") {
+      document.getElementById("submit").disabled = false;
+    } else {
+      document.getElementById("submit").disabled = true;
+    }
+  }
+  function changeUnits() {
+    if (document.getElementById("units").checked) {
+      document.getElementById("weight").innerHTML = "lbs";
+      document.getElementById("height").innerHTML = "in";
+    } else {
+      document.getElementById("weight").innerHTML = "kg";
+      document.getElementById("height").innerHTML = "cm";
+    }
+  }
+</script>
+{% endblock script %}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% block css %}{% endblock css %}
+    <title>{% block title %}{% endblock title %}</title>
+  </head>
+  {% if uname %}
+  <body onload="start()"> <!--Implement start() in other pages-->
+  {% else %}
+  <body>
+  {% endif %}
+    <div id="eat" style="display: none;">{{life_calories_eaten}}</div>
+    <div id="burn" style="display: none;">{{life_calories_burned}}</div>
+    <div id="rmr" style="display: none;">{{rmr}}</div>
+    <div id="weight" style="display: none;">{{weight}}</div>
+    <div id="age" style="display: none;">{{age}}</div>
+    <div id="mets" style="display: none;">{{activity_mets}}</div>
+    <div id="hist" style="display: none;">{{history}}</div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Navbar</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/nutrition">Nutrition</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/activity">Activity</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+            {% if uname %}
+            <li class="nav-item">
+              <a class="nav-link" href="/myaccount">Logged in as {{uname}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary" href="/logout">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary" href="/register">Register</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container" id="container">
+      {% for msg in get_flashed_messages() %} {% if msg[0] == "S" %}
+      {% if msg[-1] == "O"%}
+      <div class="alert alert-success" role="alert">
+        <a class="btn btn-primary" href="/add_nutrition">Confirm</a>
+        {{msg[1:-1]}}
+        <a class="btn btn-danger" href="/remove_nutrition">Cancel</a>
+      </div>
+      {% else %}
+      <div class="alert alert-success" role="alert">
+        {{msg[1:-1]}}<button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endif %}
+      {% elif msg[0] == "D" %}
+      <div class="alert alert-danger" role="alert">
+        {{msg[1:]}}<button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endif %} {% endfor %} {% block content %}{% endblock content %}
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+    {% block script %}{% endblock script %}
+  </body>
+</html>

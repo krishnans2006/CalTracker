@@ -1,28 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Hello!</title>
+{% extends "base.html" %}
+{% block title %}{% endblock title %}
+{% block css %}{% endblock css %}
+{% block content %}
+{%if uname%}
+<br/>
+<center><h1>Recommended Activities</h1></center>
+<br/>
+<button id="0" type="button" class="btn, btn-block"></button>
+<br/>
+<button id="1" type="button" class="btn, btn-block"></button>
+<br/>
+<button id="2" type="button" class="btn, btn-block"></button>
+<br/>
+<button id="3" type="button" class="btn, btn-block"></button>
+<br/>
+<button id="4" type="button" class="btn, btn-block"></button>
+{% endif %}
+{% endblock content %}
+{% block script %}
+<script>
+    function start(){
+        var weight = document.getElementById("weight").innerHTML;
+        var age = document.getElementById("age").innerHTML;
+        var times = [1, 5, 10, 20, 30, 45, 60, 120];
+        var mets = [];
+        var temp = document.getElementById("mets").innerHTML.split("\n");
+        for (let i = 0; i < temp.length; i++) {
+            mets[i] = temp[i].split("|");
+            delete mets[i][3];
+        }
+        mets.shift();
+        temp = document.getElementById("hist").innerHTML.split("\n");
+        var hist = [];
+        for (let i = 0; i < temp.length; i++) {
+            hist[i] = temp[i].split("|");
+        }
+        var pool = [];
+        for (let r = Math.floor(Math.random() * hist.length), i = r; i != r - 1 && pool.length < 8; i++) {
+            if(temp == "") break;
+            if(i == hist.length) i = 0;
+            c = false;
+            for (let j = 0; j < pool.length; j++) {
+                if(hist[i][0] == pool[j] || Math.random() + pool.length + 1 - pool.length / 2 < 0.5**(hist[i][1] / 60)){
+                    c = true;
+                }
+            }
+            if(c) continue;
+            pool.push(hist[i]);
+        }
+        var shortMets = []
+        var c = 0;
+        while(shortMets.length < 5 && c < 50){
+            c++;
+            for(var i = 0; i < mets.length; i += 100 * Math.random()){
+                if(mets[i][2] ** 1.5 * weight ** 0.5 * age ** 0.3 < 1000 * Math.random() && function(){
+                    for(var j = 0; j < shortMets.length; j++){
+                        if(mets[shortMets[j][0]][1] == mets[i][1] && Math.random() > 0.2) return false;
+                        return true;
+                    }
+                }()){
+                    shortMets.push(mets[i]);
+                }
+            }
+        }
+        {
+            let i = Math.random() * (shortMets.length - 1);
+            pool.push(shortMets[i]);
+            pool.unshift(shortMets[i + 1]);
+        }
+        if(pool.length < 10) pool = shortMets;
+        var recs = []
+        var s = 0
+        if(Math.random() < 0.5) {
+            s = 5
+        }
+        for(var i = 0, m = 0; i < 5; i++){
+            n = pool[i];
+            var m = 7 - Math.floor(mets[pool[i]][2] * age ** 0.3 * weight ** 0.5 / 200);
+            if(m < 0) m = 0;
+            var t = times[Math.floor(Math.random() * m)];
+            var count = 0;
+            while(function(){
+                for(var j = 0; j < recs.length; j++){
+                    if(t == recs[j][1]){
+                        return true;
+                    }
+                }
+                return false;
+            }() && count < 100){
+                t = times[Math.floor(Math.random() * m)];
+            }
+            if(count == 100) t = times[m+1];
+            recs.push(n, t);
+        }
+        for (let i = 0; i < recs.length; i++) {
+            document.getElementById(i).innerHTML = mets[recs[i][0]][1] + "for" + recs[i][1] + "minutes."; 
+            console.log(mets[recs[i][0]][1]);
+        }
+    }
     
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css">
-    
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js" defer></script>
-  </head>  
-  <body>
-    <h1>Hi there!</h1>
-    
-    <p>
-      I'm your cool new webpage. Made with <a href="https://glitch.com">Glitch</a>!
-    </p>
-
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js" defer></script>
-  </body>
-</html>
+</script>
+{% endblock script %}
